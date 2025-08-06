@@ -2,14 +2,14 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Education Quotes Cloud</title>
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(135deg, #8bb5f5 0%, #c3cfe2 100%);
             margin: 0;
-            padding: 20px;
+            padding: 10px;
             overflow-x: hidden;
         }
         
@@ -17,24 +17,26 @@
             max-width: 1200px;
             margin: 0 auto;
             text-align: center;
+            padding: 10px;
         }
         
         .logo {
             display: block;
-            margin: 0 auto 20px;
+            margin: 0 auto 15px;
             max-height: 45px;
         }
         
         h1 {
             color: #2c3e50;
             text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
-            margin-bottom: 30px;
+            margin-bottom: 20px;
+            font-size: 1.5rem;
         }
         
         .quote-cloud {
             position: relative;
             width: 100%;
-            height: 700px;
+            height: 500px;
             margin: 0 auto;
             border-radius: 15px;
             background-color: rgba(255, 255, 255, 0.7);
@@ -45,17 +47,18 @@
         .quote {
             position: absolute;
             display: inline-block;
-            padding: 15px 20px;
-            border-radius: 25px;
+            padding: 12px 15px;
+            border-radius: 20px;
             transition: all 0.3s ease;
             cursor: default;
             box-shadow: 0 4px 8px rgba(0,0,0,0.1);
             animation: float 6s infinite ease-in-out;
-            max-width: 300px;
+            max-width: 250px;
             text-align: center;
-            line-height: 1.6;
-            word-spacing: 2px;
-            letter-spacing: 0.5px;
+            line-height: 1.5;
+            word-spacing: 1px;
+            letter-spacing: 0.3px;
+            font-size: 14px;
         }
         
         .quote:hover {
@@ -66,25 +69,25 @@
         
         @keyframes float {
             0% { transform: translateY(0px); }
-            50% { transform: translateY(-10px); }
+            50% { transform: translateY(-8px); }
             100% { transform: translateY(0px); }
         }
         
         .language-tag {
             position: absolute;
-            bottom: -15px;
-            right: 10px;
+            bottom: -12px;
+            right: 8px;
             background-color: rgba(255,255,255,0.9);
-            padding: 3px 8px;
-            border-radius: 10px;
-            font-size: 10px;
+            padding: 2px 6px;
+            border-radius: 8px;
+            font-size: 9px;
             color: #555;
             font-weight: bold;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
         
         .controls {
-            margin: 20px 0;
+            margin: 15px 0;
         }
         
         button {
@@ -96,10 +99,67 @@
             border-radius: 5px;
             cursor: pointer;
             transition: background-color 0.3s;
+            font-size: 14px;
         }
         
         button:hover {
             background-color: #2980b9;
+        }
+
+        /* Mobile-specific styles */
+        @media only screen and (max-width: 768px) {
+            .container {
+                padding: 5px;
+            }
+            
+            .logo {
+                max-height: 35px;
+                margin-bottom: 10px;
+            }
+            
+            h1 {
+                font-size: 1.2rem;
+                margin-bottom: 15px;
+            }
+            
+            .quote-cloud {
+                height: 400px;
+            }
+            
+            .quote {
+                padding: 8px 12px;
+                max-width: 180px;
+                font-size: 12px;
+                line-height: 1.4;
+                border-radius: 15px;
+            }
+            
+            .language-tag {
+                font-size: 8px;
+                bottom: -10px;
+                right: 6px;
+            }
+            
+            button {
+                padding: 6px 12px;
+                font-size: 12px;
+            }
+        }
+
+        @media only screen and (max-width: 480px) {
+            .quote-cloud {
+                height: 350px;
+            }
+            
+            .quote {
+                max-width: 150px;
+                font-size: 11px;
+                padding: 6px 10px;
+            }
+            
+            h1 {
+                font-size: 1.1rem;
+            }
         }
     </style>
 </head>
@@ -264,30 +324,39 @@
         ];
 
         const quoteCloud = document.getElementById('quoteCloud');
-        const cloudWidth = quoteCloud.offsetWidth;
-        const cloudHeight = quoteCloud.offsetHeight;
+        let cloudWidth = quoteCloud.offsetWidth;
+        let cloudHeight = quoteCloud.offsetHeight;
+
+        // Update dimensions on resize
+        window.addEventListener('resize', function() {
+            cloudWidth = quoteCloud.offsetWidth;
+            cloudHeight = quoteCloud.offsetHeight;
+            positionQuotes();
+        });
 
         function positionQuotes() {
             quoteCloud.innerHTML = '';
             
             const centerX = cloudWidth / 2;
             const centerY = cloudHeight / 2;
-            const radius = Math.min(cloudWidth, cloudHeight) * 0.4;
+            // Adjust radius based on screen size
+            const radius = Math.min(cloudWidth, cloudHeight) * (window.innerWidth < 768 ? 0.3 : 0.4);
             
             quotes.forEach((quote, index) => {
                 const quoteElement = document.createElement('div');
                 quoteElement.className = 'quote';
                 quoteElement.textContent = quote.text;
                 
-                // Set styles
-                quoteElement.style.fontSize = `${quote.size}px`;
+                // Set styles - adjust size for mobile
+                const baseSize = window.innerWidth < 768 ? 12 : quote.size;
+                quoteElement.style.fontSize = `${baseSize}px`;
                 quoteElement.style.color = quote.color;
                 quoteElement.style.backgroundColor = quote.bg;
                 
                 // Calculate position in a circle
                 const angle = (index * 2 * Math.PI) / quotes.length;
-                const x = centerX + radius * Math.cos(angle) - 150;
-                const y = centerY + radius * Math.sin(angle) - 50;
+                const x = centerX + radius * Math.cos(angle) - (window.innerWidth < 768 ? 90 : 150);
+                const y = centerY + radius * Math.sin(angle) - (window.innerWidth < 768 ? 30 : 50);
                 
                 quoteElement.style.left = `${x}px`;
                 quoteElement.style.top = `${y}px`;
@@ -312,47 +381,63 @@
             let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
             
             element.onmousedown = dragMouseDown;
+            element.ontouchstart = touchStart;
             
             function dragMouseDown(e) {
                 e = e || window.event;
                 e.preventDefault();
-                // Get the mouse cursor position at startup
                 pos3 = e.clientX;
                 pos4 = e.clientY;
                 document.onmouseup = closeDragElement;
-                // Call a function whenever the cursor moves
                 document.onmousemove = elementDrag;
+            }
+            
+            function touchStart(e) {
+                e.preventDefault();
+                const touch = e.touches[0] || e.changedTouches[0];
+                pos3 = touch.clientX;
+                pos4 = touch.clientY;
+                document.ontouchend = closeDragElement;
+                document.ontouchmove = touchMove;
             }
             
             function elementDrag(e) {
                 e = e || window.event;
                 e.preventDefault();
-                // Calculate the new cursor position
                 pos1 = pos3 - e.clientX;
                 pos2 = pos4 - e.clientY;
                 pos3 = e.clientX;
                 pos4 = e.clientY;
-                // Set the element's new position
+                element.style.top = (element.offsetTop - pos2) + "px";
+                element.style.left = (element.offsetLeft - pos1) + "px";
+            }
+            
+            function touchMove(e) {
+                e.preventDefault();
+                const touch = e.touches[0] || e.changedTouches[0];
+                pos1 = pos3 - touch.clientX;
+                pos2 = pos4 - touch.clientY;
+                pos3 = touch.clientX;
+                pos4 = touch.clientY;
                 element.style.top = (element.offsetTop - pos2) + "px";
                 element.style.left = (element.offsetLeft - pos1) + "px";
             }
             
             function closeDragElement() {
-                // Stop moving when mouse button is released
                 document.onmouseup = null;
                 document.onmousemove = null;
+                document.ontouchend = null;
+                document.ontouchmove = null;
             }
         }
 
-        // Center all quotes
         function centerQuotes() {
             const quoteElements = document.querySelectorAll('.quote');
             const centerX = cloudWidth / 2;
             const centerY = cloudHeight / 2;
-            const radius = Math.min(cloudWidth, cloudHeight) * 0.4;
+            const radius = Math.min(cloudWidth, cloudHeight) * (window.innerWidth < 768 ? 0.3 : 0.4);
             
             quoteElements.forEach((quote, index) => {
-                // Calculate angle for circular positioning
                 const angle = (index * 2 * Math.PI) / quoteElements.length;
                 
                 const x = centerX + radius * Math.cos(angle) - quote.offsetWidth/2;
@@ -362,7 +447,6 @@
                 quote.style.left = `${x}px`;
                 quote.style.top = `${y}px`;
                 
-                // Remove transition after positioning is done
                 setTimeout(() => {
                     quote.style.transition = '';
                 }, 500);
